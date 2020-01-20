@@ -18,8 +18,7 @@ public class Brick extends Actor {
 		this.width = (Arkanoid_Game.getInstance().getWidth() / 12) - 2;
 		this.height = 30;
 	}
-	
-	
+
 	/**
 	 * Behavior when a collision occurs
 	 */
@@ -29,10 +28,15 @@ public class Brick extends Actor {
 		
 		if (actorCollisioned instanceof Ball) {
 			this.setMarkedForRemoval(true);
+			
+			Explosion e = new Explosion();
+			e.setX(this.x + (this.width / 2) - e.getWidth() / 2);
+			e.setY(this.y + (this.height / 2) - e.getHeight() / 2);
+			
+			Arkanoid_Game.getInstance().nextIterarionActors.add(e);
+			
 		}
 	}
-
-
 
 	/**
 	 * 

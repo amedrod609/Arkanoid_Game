@@ -28,13 +28,13 @@ public class Arkanoid_Game extends Canvas {
 	private long usedTime;
 	// Main Brick list
 	List<Actor> actors = new ArrayList<Actor>();
-	
+
 	// Actors to be added in the next iteration
 	List<Actor> nextIterarionActors = new ArrayList<Actor>();
 
-	//Player object
+	// Player object
 	Player player = null;
-	
+
 	// Singleton Pattern
 	private static Arkanoid_Game instance = null;
 
@@ -66,11 +66,11 @@ public class Arkanoid_Game extends Canvas {
 
 	// Create desired actors and store them in a list
 	public void initWorld() {
-		//Create a brick and store it into a List
+		// Create a brick and store it into a List
 		int counterY = 5;
 		int counterX = 5;
 		for (int i = 0; i < 6; i++) {
-			
+
 			for (int j = 0; j < 12; j++) {
 				Brick b = new Brick();
 
@@ -79,7 +79,7 @@ public class Arkanoid_Game extends Canvas {
 
 				actors.add(b);
 				counterX += Brick.getInstance().getWidth() + 2;
-				
+
 				if (i == 0) {
 					b.setColor(Color.RED);
 				}
@@ -87,7 +87,7 @@ public class Arkanoid_Game extends Canvas {
 					b.setColor(Color.YELLOW);
 				}
 				if (i == 2) {
-					b.setColor(Color.RED);
+					b.setColor(Color.BLUE);
 				}
 				if (i == 3) {
 					b.setColor(Color.PINK);
@@ -98,12 +98,12 @@ public class Arkanoid_Game extends Canvas {
 				if (i == 5) {
 					b.setColor(Color.CYAN);
 				}
-				
+
 			}
 			counterX = 5;
 			counterY += Brick.getInstance().getHeight() + 2;
 		}
-		
+
 		// Create new Ball
 		Ball ball = new Ball();
 		ball.setX(265);
@@ -111,65 +111,70 @@ public class Arkanoid_Game extends Canvas {
 		ball.setVx(-3);
 		ball.setVy(-3);
 		actors.add(ball);
-		
-		//Create new player
+
+		// Create new player
 		Player player = new Player();
 		player.setX(250);
 		player.setY(700);
 		actors.add(player);
-		
+
 		this.player = player;
 		this.addKeyListener(player);
-
+		
 	}
 
 	public void updateWorld() {
 		List<Actor> actorsForRemoval = new ArrayList<Actor>();
-		//Check if actor is marked for removal in the main list
-		//if so, store it into a list
-		for (Actor actor :this.actors) {
+		// Check if actor is marked for removal in the main list
+		// if so, store it into a list
+		for (Actor actor : this.actors) {
 			if (actor.isMarkedForRemoval()) {
 				actorsForRemoval.add(actor);
 			}
 		}
-		//Remove marked actor of the main list
+		// Remove marked actor of the main list
 		for (Actor actor : actorsForRemoval) {
 			this.actors.remove(actor);
 		}
-		
-		//Clear list for the next iteration
+
+		// Clear list for the next iteration
 		actorsForRemoval.clear();
-		
-		//Add stored actors for the next iteration and clear the list
+
+		// Add stored actors for the next iteration and clear the list
 		this.actors.addAll(nextIterarionActors);
 		this.nextIterarionActors.clear();
-		
-		
-		//Detect collisions
-		
+
+		// Detect collisions
+
 		for (Actor a : this.actors) {
-			//Create a rectangle that would act as a hitbox
-			//Rectangle dimensions are the same as the actor's dimensions
-			Rectangle rect1 = new Rectangle(a.getX(), a.getY(), a.getWidth(), a.getHeight());
-			
-			//For every actor we go over the list checking if the hitboxes intersects
-			for (Actor b : this.actors) {
-				Rectangle rect2 = new Rectangle(b.getX(), b.getY(), b.getWidth(), b.getHeight());
-				
-				if (rect1.intersects(rect2)) {
-					a.collisionWith(b);
-					b.collisionWith(a);
+			if (a instanceof Ball) {
+				// Create a rectangle that would act as a hitbox
+				// Rectangle dimensions are the same as the actor's dimensions
+				Rectangle rect1 = new Rectangle(a.getX(), a.getY(), a.getWidth(), a.getHeight());
+
+				// For every actor we go over the list checking if the hitboxes intersects
+				for (Actor b : this.actors) {
+					if (!b.equals(a) && !b.isMarkedForRemoval() && !a.isMarkedForRemoval()) {
+						Rectangle rect2 = new Rectangle(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+						if (rect1.intersects(rect2)) {
+							a.collisionWith(b);
+							b.collisionWith(a);
+
+							if (a instanceof Ball && b instanceof Brick) {
+								break;
+							}
+						}
+					}
 				}
 			}
-			
-		}
-		
 
-		//Main actors list act
+		}
+
+		// Main actors list act
 		for (Actor actor : actors) {
 			actor.act();
 		}
-	
+
 	}
 
 	public void paintWorld() {
@@ -182,7 +187,7 @@ public class Arkanoid_Game extends Canvas {
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 		// Paint objects
-	
+
 		for (Actor a : actors) {
 			a.paint(g);
 		}

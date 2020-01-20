@@ -4,57 +4,122 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Actor {
 
 	protected int x, y; // Actor's coords
-	protected int vx; //X axis movement speed
+	protected int vx; // X axis movement speed
 	protected int vy; // Y axis movement speed
 	protected Color color; // Class color
 	protected int width, height; // Hitbox
-	protected BufferedImage image; // Image sprite
-	protected boolean markedForRemoval = false; //Flag for removing a hit object
+	protected List<BufferedImage> sprites = new ArrayList<BufferedImage>(); // Sprite list for animations
+	protected BufferedImage currentSprite = null; // Image sprite
+	protected int timeUnit = 0;
+	protected int spriteChangeSpeed = 0;
 
+	protected boolean markedForRemoval = false; // Flag for removing a hit object
+
+	/*
+	 * 
+	 */
 	public Actor() {
-		this.image = null;
+	}
+	/**
+	 * 
+	 * @param spriteName
+	 */
+	Actor(String spriteName) {
+		// Load image using SpritesRepository class
+		this.spriteChangeSpeed = 1;
+		loadImageFromSpriteNames(new String[] { spriteName });
+	}
+	/**
+	 * 
+	 * @param spriteNames
+	 */
+	public Actor(String spriteNames[]) {
+		this.spriteChangeSpeed = 1;
+		loadImageFromSpriteNames(spriteNames);
+	}
+	/**
+	 * 
+	 * @param spriteNames
+	 * @param spriteChangeSpeed
+	 */
+	public Actor(String spriteNames[], int spriteChangeSpeed) {
+		this.spriteChangeSpeed = spriteChangeSpeed;
+		loadImageFromSpriteNames(spriteNames);
 	}
 
-	/**
-	 * @param x
-	 * @param y
-	 * @param color
-	 * @param width
-	 * @param height
-	 * @param image
-	 */
-	public Actor(String spriteName) {
-		// Load image using SpritesRepository class
-		this.image = SpritesRepository.getInstance().getSprite(spriteName);
+	public void loadImageFromSpriteNames(String spriteNames[]) {
+		// Get images from Sprites Repository class
+		for (String s : spriteNames) {
+			this.sprites.add(SpritesRepository.getInstance().getSprite(s));
+		}
+		// Assign the fist sprite
+		if (this.sprites.size() > 0) {
+			this.currentSprite = this.sprites.get(0);
+		}
 		adjustHeightAndWidth();
 	}
-	
+
 	/**
 	 * 
 	 * @param actorCollisioned
 	 */
-	public void collisionWith(Actor actorCollisioned) {}
+	public void collisionWith(Actor actorCollisioned) {
+	}
 
 	/**
 	 * 
 	 */
 	private void adjustHeightAndWidth() {
 		// Get image measurements
-		height = this.image.getHeight();
-		width = this.image.getWidth();
+//		height = this.currentSprite.getHeight();
+//		width = this.currentSprite.getWidth();
+		
+		if (this.sprites.size() > 0) {
+			this.height = this.sprites.get(0).getHeight();
+			this.width = this.sprites.get(0).getWidth();
+		}
+		for (BufferedImage b : sprites) {
+			if (b.getWidth()> this.width) {
+				this.width = b.getWidth();
+			}
+			if (b.getHeight() > this.height) {
+				this.height = b.getHeight();
+			}
+		}
 	}
 
-	public abstract void act();
+	public void act() {
+		if (this.sprites != null && this.sprites.size() > 1) {
+			
+			timeUnit++;
+			
+			//Function for changing the sprite
+			if (timeUnit % spriteChangeSpeed == 0) {
+				
+				timeUnit = 0;
+				
+				int currentSpriteIndex = sprites.indexOf(this.currentSprite);
+				
+				int nextSpriteIndex = (currentSpriteIndex + 1) % sprites.size();
+				
+				this.currentSprite = sprites.get(nextSpriteIndex);
+			}
+		}
+	}
+
 	/**
 	 * Paint actor on screen
+	 * 
 	 * @param g
 	 */
 	public void paint(Graphics2D g) {
-		g.drawImage(this.image, this.x, this.y, null);
+		g.drawImage(this.currentSprite, this.x, this.y, null);
 	}
 
 	/**
@@ -84,8 +149,6 @@ public abstract class Actor {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
-	
 
 	/**
 	 * @return the vx
@@ -161,14 +224,14 @@ public abstract class Actor {
 	 * @return the image
 	 */
 	public BufferedImage getImage() {
-		return image;
+		return currentSprite;
 	}
 
 	/**
 	 * @param image the image to set
 	 */
 	public void setImage(BufferedImage image) {
-		this.image = image;
+		this.currentSprite = image;
 		this.adjustHeightAndWidth();
 	}
 
@@ -186,5 +249,4 @@ public abstract class Actor {
 		this.markedForRemoval = markedForRemoval;
 	}
 
-	
 }
