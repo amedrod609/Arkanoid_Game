@@ -33,6 +33,8 @@ public class Brick extends Actor {
 			e.setX(this.x + (this.width / 2) - e.getWidth() / 2);
 			e.setY(this.y + (this.height / 2) - e.getHeight() / 2);
 			
+			SoundsRepository.getInstance().playSound("Arkanoid-SFX-01.wav");
+			
 			Arkanoid_Game.getInstance().nextIterarionActors.add(e);
 			
 		}

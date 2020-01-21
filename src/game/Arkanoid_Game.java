@@ -66,6 +66,9 @@ public class Arkanoid_Game extends Canvas {
 
 	// Create desired actors and store them in a list
 	public void initWorld() {
+		
+		SoundsRepository.getInstance().playSound("Arkanoid-start-of-stage.wav");
+		
 		// Create a brick and store it into a List
 		int counterY = 5;
 		int counterX = 5;
@@ -108,8 +111,8 @@ public class Arkanoid_Game extends Canvas {
 		Ball ball = new Ball();
 		ball.setX(265);
 		ball.setY(675);
-		ball.setVx(-3);
-		ball.setVy(-3);
+		ball.setVx(-4);
+		ball.setVy(-4);
 		actors.add(ball);
 
 		// Create new player
