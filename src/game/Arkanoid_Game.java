@@ -8,6 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class Arkanoid_Game extends Canvas {
 
 	// Player object
 	Player player = null;
+	Ball ball = null;
 
 	// Singleton Pattern
 	private static Arkanoid_Game instance = null;
@@ -66,7 +69,7 @@ public class Arkanoid_Game extends Canvas {
 
 	// Create desired actors and store them in a list
 	public void initWorld() {
-		
+		SoundsRepository.getInstance();
 		SoundsRepository.getInstance().playSound("Arkanoid-start-of-stage.wav");
 		
 		// Create a brick and store it into a List
@@ -114,15 +117,33 @@ public class Arkanoid_Game extends Canvas {
 		ball.setVx(-4);
 		ball.setVy(-4);
 		actors.add(ball);
+		
+		//Ball pointer
+		this.ball = ball;
 
 		// Create new player
 		Player player = new Player();
-		player.setX(250);
+		player.setX(this.getWidth()/ 2 - (player.width / 2));
 		player.setY(700);
 		actors.add(player);
 
 		this.player = player;
 		this.addKeyListener(player);
+		this.addMouseListener(player);
+		this.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				player.setX(e.getX());
+				
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 	}
 
@@ -236,6 +257,26 @@ public class Arkanoid_Game extends Canvas {
 	public static void main(String[] args) {
 		Arkanoid_Game.getInstance().game();
 
+	}
+	
+	public Ball getBall() {
+		Ball b = new Ball();
+		for (Actor actor : actors) {
+			if (actor instanceof Ball) {
+				b = (Ball) actor;
+			}
+		}
+		return b;
+	}
+	
+	public Player getPlayer() {
+		Player p = new Player();
+		for (Actor actor : actors) {
+			if (p instanceof Player) {
+				p = (Player) actor;
+			}
+		}
+		return p;
 	}
 
 }

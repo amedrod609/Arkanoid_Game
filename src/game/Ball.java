@@ -3,16 +3,25 @@ package game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.sql.Date;
 
 public class Ball extends Actor {
 
 	public static Ball instance = null;
 
+	private static final int LAUNCH_TIME = 5;
+	
+	private static final float TIME_AT_CREATION = System.currentTimeMillis();
+	
+	PuntoAltaPrecision ballLocation = null;
+	
+	TrayectoriaRecta trajectory = null;
 	/**
 	 * 
 	 */
 	public Ball() {
 		super();
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -35,6 +44,7 @@ public class Ball extends Actor {
 	}
 
 	public void act() {
+		
 		this.x += this.vx;
 		if (this.x < 0 || this.x > (Arkanoid_Game.getInstance().getWidth() - this.getWidth())) {
 			vx = -vx;
@@ -59,6 +69,15 @@ public class Ball extends Actor {
 
 		g.setColor(Color.WHITE);
 		g.fillOval(x, y, width, height);
+		
 
 	}
+	
+//	private void ballFixedToPlayer() {
+//		Arkanoid_Game.getInstance().getPlayer().setX(this.x + (this.width/2) - Arkanoid_Game.getInstance().getPlayer().getWidth() / 2 );
+//		Arkanoid_Game.getInstance().getPlayer().setY(this.y - (this.height + this.height/2));
+//	}
+
+	
+	
 }

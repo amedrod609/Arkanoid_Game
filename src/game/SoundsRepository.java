@@ -22,18 +22,18 @@ public class SoundsRepository {
 	// Carpeta en la que se encuentran los recursos: imágenes, sonidos, etc.
 	private static String RESOURCES_FOLDER = "../res/";
 	
-//	// Recursos de sonido que puede utilizarse en el juego
-//	public static String MUSICA_DE_FONDO = "musica.wav";
-//	public static String EFECTO_JUGADOR_1 = "missile.wav";
-//	public static String EFECTO_JUGADOR_2 = "photon.wav";
+	// Recursos de sonido que puede utilizarse en el juego
+	public static String MUSICA_DE_INICIO = "Arkanoid-start-of-stage.wav";
+	public static String EFECTO_COLISION_BLOQUE = "Arkanoid-SFX-01.wav";
+	//public static String EFECTO_JUGADOR_2 = "photon.wav";
 	
 	/**
 	 * Default constructor
 	 */
 	public SoundsRepository() {
-//		// Carga de recursos en memoria
-//		this.getAudioClip(MUSICA_DE_FONDO);
-//		this.getAudioClip(EFECTO_JUGADOR_1);
+//		 Carga de recursos en memoria
+		this.getAudioClip(MUSICA_DE_INICIO);
+		this.getAudioClip(EFECTO_COLISION_BLOQUE);
 //		this.getAudioClip(EFECTO_JUGADOR_2);
 	}
 	
