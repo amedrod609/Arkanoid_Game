@@ -77,8 +77,6 @@ public abstract class Actor {
 	 */
 	private void adjustHeightAndWidth() {
 		// Get image measurements
-//		height = this.currentSprite.getHeight();
-//		width = this.currentSprite.getWidth();
 		
 		if (this.sprites.size() > 0) {
 			this.height = this.sprites.get(0).getHeight();

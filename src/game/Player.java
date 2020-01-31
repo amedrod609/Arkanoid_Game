@@ -8,9 +8,11 @@ import java.awt.event.MouseListener;
 
 public class Player extends Actor implements KeyListener, MouseListener{
 
-	boolean up, down, left, right, control, shift, nKey, mKey; // Booleans to control arrow key pressing
-	boolean startMovingBall = true;
-	public static final int PLAYER_SPEED = 4;
+	private boolean up, down, left, right, control, shift, nKey, mKey; // Booleans to control arrow key pressing
+	private boolean startMovingBall = false;
+	public static final int PLAYER_SPEED = 8;
+	private int livesLeft = 2; // As the programmers we are, we all start counting beginning with 0, so the actual number of lives 
+								//remaining are one more than the number specified here :)
 	
 
 	/**
@@ -23,25 +25,14 @@ public class Player extends Actor implements KeyListener, MouseListener{
 
 	@Override
 	public void act() {
-		if (startMovingBall) {
-			ballFixedToPlayer();
-		} else {
-			if (control && shift && nKey) {
-				this.x = Arkanoid_Game.getInstance().getBall().getX();
-			} else {
+		this.x += vx;
 
-				this.x += vx;
+		if (this.x < 0) {
+			this.x = 0;
+		}
 
-				if (this.x < 0) {
-					this.x = 0;
-				}
-
-				if (this.x > Arkanoid_Game.getInstance().getWidth() - this.getWidth()) {
-					this.x = Arkanoid_Game.getInstance().getWidth() - this.getWidth();
-				}
-
-			}
-
+		if (this.x > Arkanoid_Game.getInstance().getWidth() - this.getWidth()) {
+			this.x = Arkanoid_Game.getInstance().getWidth() - this.getWidth();
 		}
 		
 	}
@@ -74,7 +65,8 @@ public class Player extends Actor implements KeyListener, MouseListener{
 			mKey = true;
 			break;
 		case KeyEvent.VK_SPACE:
-			startMovingBall = false;
+			Ball.getInstance().setLaunchBall(true);
+			break;
 		}
 
 		updateSpeed();
@@ -123,6 +115,14 @@ public class Player extends Actor implements KeyListener, MouseListener{
 		Arkanoid_Game.getInstance().getBall().setX(this.x + (this.width/2) - Arkanoid_Game.getInstance().getBall().getWidth() / 2 );
 		Arkanoid_Game.getInstance().getBall().setY(this.y - (this.height + this.height/2));
 	}
+	
+//	private void FiveSecondsCounter() {
+//		Ball.getInstance();
+//		long nowMillis = System.currentTimeMillis();
+//		if ((nowMillis - Ball.TIME_AT_CREATION) >= Ball.LAUNCH_TIME * 1000) {
+//			startMovingBall = true;
+//		}
+//	}
 
 	protected void updateSpeed() {
 		this.vx = 0;
@@ -166,5 +166,37 @@ public class Player extends Actor implements KeyListener, MouseListener{
 		// TODO Auto-generated method stub
 		
 	}
+
+	/**
+	 * @return the startMovingBall
+	 */
+	public boolean isStartMovingBall() {
+		return startMovingBall;
+	}
+
+	/**
+	 * @param startMovingBall the startMovingBall to set
+	 */
+	public void setStartMovingBall(boolean startMovingBall) {
+		this.startMovingBall = startMovingBall;
+	}
+
+	/**
+	 * @return the livesLeft
+	 */
+	public int getLivesLeft() {
+		return livesLeft;
+	}
+
+	/**
+	 * @param livesLeft the livesLeft to set
+	 */
+	public void setLivesLeft(int livesLeft) {
+		this.livesLeft = livesLeft;
+	}
+	
+	
+	
+	
 
 }

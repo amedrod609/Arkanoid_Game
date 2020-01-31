@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class Arkanoid_Game extends Canvas {
 
 	// Actors to be added in the next iteration
 	List<Actor> nextIterarionActors = new ArrayList<Actor>();
+	// Actors to be deleted in the next iteration
+	List<Actor> actorsForRemoval = new ArrayList<Actor>();
 
 	// Player object
 	Player player = null;
@@ -112,10 +115,8 @@ public class Arkanoid_Game extends Canvas {
 
 		// Create new Ball
 		Ball ball = new Ball();
-		ball.setX(265);
-		ball.setY(675);
-		ball.setVx(-4);
-		ball.setVy(-4);
+		ball.setX(this.getWidth()/ 2 - ball.width / 2);
+		ball.setY(670 - ball.height);
 		actors.add(ball);
 		
 		//Ball pointer
@@ -129,6 +130,8 @@ public class Arkanoid_Game extends Canvas {
 
 		this.player = player;
 		this.addKeyListener(player);
+		this.addKeyListener(ball);
+		this.addMouseListener(ball);
 		this.addMouseListener(player);
 		this.addMouseMotionListener(new MouseMotionListener() {
 			
@@ -148,7 +151,7 @@ public class Arkanoid_Game extends Canvas {
 	}
 
 	public void updateWorld() {
-		List<Actor> actorsForRemoval = new ArrayList<Actor>();
+		
 		// Check if actor is marked for removal in the main list
 		// if so, store it into a list
 		for (Actor actor : this.actors) {
@@ -200,6 +203,27 @@ public class Arkanoid_Game extends Canvas {
 		}
 
 	}
+	
+	public void ballMissed() {
+		//Delete current ball
+		ball.setMarkedForRemoval(true);
+		
+		System.out.println("Ball is ded");
+		//Create a new ball, mirror of the other
+		Ball ball = new Ball();
+		ball.setX(this.getWidth()/ 2 - ball.width / 2);
+		ball.setY(670 - ball.height);
+		nextIterarionActors.add(ball);
+		// Changue de ball in the pointer
+		this.ball = ball;
+		//Add new listeners for the new ball
+		this.addKeyListener(ball);
+		this.addMouseListener(ball);
+		//Player lost a live
+		player.setLivesLeft(player.getLivesLeft()-1);
+		
+		
+	}
 
 	public void paintWorld() {
 		Toolkit.getDefaultToolkit().sync();
@@ -215,7 +239,18 @@ public class Arkanoid_Game extends Canvas {
 		for (Actor a : actors) {
 			a.paint(g);
 		}
-
+		
+		//Paint the spare lives
+		//X coordinate for the images
+		int xCoordLives = 10;
+		//New image to load
+		BufferedImage img = SpritesRepository.getInstance().getSprite("nave-25x7.png");
+		
+		//Draw as much images as lives are left
+		for (int i = 0; i < player.getLivesLeft(); i++) {
+			g.drawImage(img, xCoordLives, 750, null);
+			xCoordLives += img.getWidth() + 2;
+		}
 		strategy.show();
 
 	}
@@ -254,10 +289,7 @@ public class Arkanoid_Game extends Canvas {
 		return instance;
 	}
 
-	public static void main(String[] args) {
-		Arkanoid_Game.getInstance().game();
 
-	}
 	
 	public Ball getBall() {
 		Ball b = new Ball();
@@ -272,11 +304,16 @@ public class Arkanoid_Game extends Canvas {
 	public Player getPlayer() {
 		Player p = new Player();
 		for (Actor actor : actors) {
-			if (p instanceof Player) {
+			if (actor instanceof Player) {
 				p = (Player) actor;
 			}
 		}
 		return p;
+	}
+	
+	public static void main(String[] args) {
+		Arkanoid_Game.getInstance().game();
+
 	}
 
 }
